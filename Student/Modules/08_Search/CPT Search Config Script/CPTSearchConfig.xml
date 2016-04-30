@@ -1,0 +1,24 @@
+<config>
+<ServiceAppName>Search Service Application</ServiceAppName>
+<AdminServer>WINGTIPSERVER</AdminServer>
+<CrawlServers>
+	<Server Name="WINGTIPSERVER"/>
+</CrawlServers>
+<QueryServers>
+	<Server Name="WINGTIPSERVER"/>
+</QueryServers>
+<IndexServer>WINGTIPSERVER</IndexServer>
+<AnalyticsServer>WINGTIPSERVER</AnalyticsServer>
+<ContentProcessingServer>WINGTIPSERVER</ContentProcessingServer>
+<ServiceAccountUser>WINGTIP\SP_Services</ServiceAccountUser>
+<CrawlUser>WINGTIP\SP_Crawler</CrawlUser>
+<SearchCenterUrl>https://intranet.wingtip.com/search/pages</SearchCenterUrl>
+<IndexLocation>C:\SharePoint\Indexes</IndexLocation>
+<SearchAppPoolName>Wingtip Service Applications</SearchAppPoolName>
+<SearchAppPoolAccountName>WINGTIP\SP_Services</SearchAppPoolAccountName>
+<SearchServiceProxyName>Search Service Application Proxy</SearchServiceProxyName>
+<DatabaseServer>SPSQL</DatabaseServer>
+<DatabaseName>SharePoint_Service_Search_Service</DatabaseName>
+<ContactEmail>sharepoint@wingtip.com</ContactEmail>
+</config>
+
