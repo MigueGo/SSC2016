@@ -85,6 +85,7 @@ $TCPAlias = "DBMSSOCN,"+$sqlserver+","+$port
 #$NamedPipesAlias = "DBNMPNTW,\\" + $sqlserver + "\pipe\sql\query"
  
 #Creating our TCP/IP Aliases
+Write-Host "Alias: $($alias) is $($TCPAlias)"
 New-ItemProperty -Path $x86 -Name "$alias" -PropertyType String -Value $TCPAlias
 New-ItemProperty -Path $x64 -Name "$alias" -PropertyType String -Value $TCPAlias
 
@@ -1188,7 +1189,7 @@ Add-TrustedSiteToInternetExplorer
 Create-SharePointServiceAccounts
 
 #Create SQL Alias
-Create-SQLAlias($dbServer, $realDBServer, $realDBServerPort)
+Create-SQLAlias $dbServer $realDBServer $realDBServerPort
 
 # create and initialize a new farm
 Create-NewWingtipFarm
