@@ -37,7 +37,7 @@ function Configure-IPAddresesForFarm {
     $netadapter = Get-NetAdapter | Where-Object { $_.Name -like "*int*" } 
     $netadapter | New-NetIPAddress -IPAddress 192.168.150.2 -PrefixLength 24 | Out-Null
     $netadapter | New-NetIPAddress -IPAddress 192.168.150.3 -PrefixLength 24 | Out-Null 
-    #$netadapter | New-NetIPAddress -IPAddress 192.168.150.4 -PrefixLength 24 | Out-Null
+    $netadapter | New-NetIPAddress -IPAddress 192.168.150.4 -PrefixLength 24 | Out-Null
     #$netadapter | New-NetIPAddress -IPAddress 192.168.150.5 -PrefixLength 24 | Out-Null 
 }
 
@@ -107,7 +107,6 @@ function Create-WingtipDnsRecords(){
     New-DnsARecord -dnsName 'intranet.wingtip.com' -ipAddress 192.168.150.2
     New-DnsARecord -dnsName 'extranet.wingtip.com' -ipAddress 192.168.150.3
     New-DnsARecord -dnsName 'my.wingtip.com' -ipAddress 192.168.150.1
-    #New-DnsARecord -dnsName 'appserver.wingtip.com' -ipAddress 192.168.150.5
 
     Write-Host
 }
@@ -263,7 +262,7 @@ function Create-SharePointServiceAccounts{
 
 function Create-NewWingtipFarm{
 
-    Write-Host "Creaing a new farm by calling New-SPConfigurationDatabase..."
+    Write-Host "Creating a new farm by calling New-SPConfigurationDatabase..."
     New-SPConfigurationDatabase `
 		-LocalServerRole Custom `
         -DatabaseServer $dbServer `
@@ -881,8 +880,9 @@ function Create-SiteGroups ($site)
  
         Write-Host "Removing any existing visitors group for Site collection $($site.Url)" -foregroundcolor yellow
         #This is here to fix the situation where a visitors group has already been assigned
-        $site.RootWeb.AssociatedVisitorGroup = $null;
-        $site.RootWeb.Update();Write-Host "Creating Owners group for Site collection $($site.Url)" -foregroundcolor green
+        $site.RootWeb.AssociatedVisitorGroup = $null
+        $site.RootWeb.Update()
+        Write-Host "Creating Owners group for Site collection $($site.Url)" -foregroundcolor green
         $site.RootWeb.CreateDefaultAssociatedGroups($primaryOwner, $secondaryOwner, $site.RootWeb.Title)
         
         $site.RootWeb.Update();
@@ -1170,21 +1170,7 @@ function Grant-WebApplicationPermissionsToServiceAccount{
 
 #Begin Lab 1
 
-# add IP address for farm
-Configure-IPAddresesForFarm
-
-# disable loopback checks to enable local browsing to sites
-Disable-LoopbackChecks
-
-# add DNS A records required to build farm
-Create-WingtipDnsRecords
-
-# create SSL test certificates used in farm
-#Create-WingtipSslTestCertificates
-
-# configure [*.wingtip.com] as trusted site in Internet Explorer
-Add-TrustedSiteToInternetExplorer
-
+#Users and Accounts
 # create active directory accounts for SharePoint service accounts
 Create-SharePointServiceAccounts
 
@@ -1200,19 +1186,20 @@ Add-PSSnapin Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue
 
 
 #Begin Lab 2
-
 #Move ahead to build out farm
-
 Create-ManagedAccounts
 
 $serviceAppPoolName = Get-ServiceApplicationPoolName
 
+#Lab 2 Ex 3 - this is manual
 Create-WordAutomationServicesApplication
 
+#Lab 2 Ex 4 - these are scripted
 Create-BCSApplication
-
 Create-ManagedMetadataService
+Create-SiteSubscriptionSettingsService
 
+#Lab 2 Ex 5 - FCW
 Create-AppManagementServiceApplication
 
 Create-SecureStoreServiceApplication
@@ -1235,9 +1222,25 @@ Create-PrimaryWebApplication
 
 #Begin Lab 3
 
+# add IP address for farm
+Configure-IPAddresesForFarm
+
+# add DNS A records required to build farm
+Create-WingtipDnsRecords
+
+# disable loopback checks to enable local browsing to sites
+Disable-LoopbackChecks
+
+# create SSL test certificates used in farm
+#Create-WingtipSslTestCertificates
+
 # create web applications 
 Create-WingtipIntranetWebApplication
-setspn –S http/intranet.wingtip.com WINGTIP\SP_Content
+setspn –S http/intranet.wingtip.com WINGTIP\SP_Content #Run Administratively
+
+
+# configure [*.wingtip.com] as trusted site in Internet Explorer
+Add-TrustedSiteToInternetExplorer
 
 Create-WingtipExtranetWebApplication
 
@@ -1263,6 +1266,16 @@ $ie.Navigate2("https://intranet.wingtip.com", $navOpenInBackgroundTab);
 $ie.Navigate2("https://extranet.wingtip.com", $navOpenInBackgroundTab);
 $ie.Visible = $true;
 
+#Create Managed Path for Search Site
+New-SPManagedPath -WebApplication https://intranet.wingtip.com -RelativeURL "search" -Explicit:$true | Out-Null
+
+#Sites
+#https://intranet.wingtip.com/Sites/operations with STS#0
+
+#Create HNSCs
+#http://sales.wingtip.com
+#https://research.wingtip.com
+
 #Lab 5
 Create-IntranetSearchCenter
 
@@ -1284,7 +1297,8 @@ Write-Host "You can run the User Profile Creation Script here."
 Create-SearchServiceApplication
 
 #Lab 14
-Create-SiteSubscriptionSettingsService
+#This should have been done in Lab 2
+#Create-SiteSubscriptionSettingsService
 
 Write-Host "Script complete - the Wingtip farm is now ready for access"
 Write-Host "You must run two more scripts to configure user profiles and workflow services"
