@@ -14,3 +14,5 @@ Write-Host "Preservation Hold List:" $list.title
 $record = New-Object Microsoft.Office.RecordsManagement.Preservation.HoldSettings($site) 
 Write-Host "Preservation Holds"
 $record.getallholds()
+
+Read-Host -Prompt "Press [Enter] to close this window"

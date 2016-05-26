@@ -21,11 +21,11 @@ Write-Host "Creating new site at" $SiteUrl
 $NewSite = New-SPSite -URL $SiteUrl -OwnerAlias $SiteCollectionOwner -Template $SiteTemplate -Name $SiteTitle
 $RootWeb = $NewSite.RootWeb
 
-iisreset
+#iisreset
 
 #Kick off a crawl
-$contentSource = Get-SPEnterpriseSearchServiceApplication | Get-SPEnterpriseSearchCrawlContentSource -Identity 1
-$contentSource.StartFullCrawl()
+#$contentSource = Get-SPEnterpriseSearchServiceApplication | Get-SPEnterpriseSearchCrawlContentSource -Identity 1
+#$contentSource.StartFullCrawl()
 
 # display site info
 Write-Host 
