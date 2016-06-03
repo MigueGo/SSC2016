@@ -118,7 +118,7 @@ Write-Output "Cloud search service application provisioning completed successful
     { 
 
     Write-Output "Account supplied for Search Service does not exist in Active Directory." 
-      Write-Write-Output "Account supplied for Search Service does not exist in Active Directory." 
+      Write-Output "Account supplied for Search Service does not exist in Active Directory." 
       Write-Output "Script is quitting. Please create the account and run again." 
       Break 
 
